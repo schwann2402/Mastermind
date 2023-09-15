@@ -1,0 +1,208 @@
+class Game
+attr_accessor :p1, :answer_2, :answer_3, :answer_4, :guess
+@@turn_count = 0
+@@color_array = ["", "", "", "", ""]
+@@possible_colors = ["blue", "green", "white", "red", "black", "yellow"]
+@@correct_place = 0
+@@correct_color = 0
+@@game_over = false
+
+  def initialize(human_player_type)
+    @p1 = human_player_type
+  end 
+
+  def class_Var
+    @@color_array
+    @@turn_count
+    @@correct_color
+    @@correct_place
+    @@possible_colors
+    @@game_over
+  end 
+
+  def turn_results()
+    p "You have #{@@correct_place} colors in the right place and #{@@correct_color} correct colors"
+  end 
+
+#how game flows if player 1 is guesser
+  def game_flow_guesser
+    while (@@turn_count < 10 and @@game_over == false) do
+    puts "Guess the 4 color sequence (separate them with a comma) "
+    @guess = gets.chomp().split(/, /)
+      while (@guess.all?{|color| @@possible_colors.include?(color)} == false)
+        p "All colors must be possible game colors"
+        p  "Guess the 4 color sequence (separate them with a comma) "
+        @guess = gets.chomp().split(/, /)
+      end 
+    @@turn_count += 1
+      if (@guess == @code)
+       p "You have won the game"
+        @@game_over == true
+        return
+      end
+      if
+        @guess[0] == @code[0]
+        @@correct_place += 1
+      end
+      if 
+        @guess[1] == @code[1]
+        @@correct_place += 1
+      end
+      if 
+        @guess[2] == @code[2]
+        @@correct_place += 1
+      end
+      if 
+        @guess[3] == @code[3]
+        @@correct_place += 1
+      end 
+      if
+        @code.include?(@guess[0])
+        @@correct_color += 1
+      end
+      if
+        @code.include?(@guess[1])
+        @@correct_color += 1
+      end
+      if 
+        @code.include?(@guess[2])
+        @@correct_color += 1
+      end
+      if 
+        @code.include?(@guess[3])
+        @@correct_color += 1
+      end
+      turn_results()
+      p "You have #{10 - @@turn_count} turns left"
+      @@correct_color = 0
+      @@correct_place = 0
+    end
+    if @@turn_count == 10
+      p "GAME OVER"
+    end 
+  end 
+
+#how game flows if player 1 is creator
+  def game_flow_creator
+    while (@@turn_count < 10 and @@game_over == false) do
+      puts "Your opponent guess is: "
+      @guess = @@possible_colors.sample(4)
+      p @guess
+      @@turn_count += 1
+        if (@guess == @code)
+          p "You have won the game"
+          @@game_over == true
+          return
+        end
+        if
+          @guess[0] == @code[0]
+          @@correct_place += 1
+        end
+        if 
+          @guess[1] == @code[1]
+          @@correct_place += 1
+        end
+        if 
+          @guess[2] == @code[2]
+          @@correct_place += 1
+        end
+        if 
+          @guess[3] == @code[3]
+          @@correct_place += 1
+        end 
+        if
+          # si el guess tiene algun color del código 
+          @code.include?(@guess[0])
+          @@correct_color += 1
+        end
+        if
+          @code.include?(@guess[1])
+          @@correct_color += 1
+        end
+        if 
+          @code.include?(@guess[2])
+          @@correct_color += 1
+        end
+        if 
+          @code.include?(@guess[3])
+          @@correct_color += 1
+        end
+        turn_results()
+        p "You have #{10 - @@turn_count} turns left"
+        @@correct_color = 0
+        @@correct_place = 0
+      end
+      if @@turn_count == 10 
+        p "GAME OVER"
+      end 
+
+  end
+  #define if player is the guesser or the creator, and if creator how will the code be created
+  def turn 
+    if p1.type_of_player == "guesser"
+      @code = @@possible_colors.sample(4)
+      game_flow_guesser()
+    elsif p1.type_of_player == "creator"
+      coder_opt()
+      game_flow_creator()
+    end 
+    
+  end 
+
+#how player creates the cod
+  def coder_opt
+    puts "Select first color:"
+    @answer = gets.chomp().to_s
+    while (@@possible_colors.include?(@answer) == false)
+      p "Choose a possible color of the game"
+      @answer = gets.chomp().to_s
+    end 
+    @@color_array[0] = @answer
+    puts "Select second color:"
+    @answer_2 = gets.chomp().to_s
+    while (@@color_array.include?(@answer_2) == true || @@possible_colors.include?(@answer_2) == false)
+        p "Choose a different color"
+        @answer_2 = gets.chomp().to_s
+    end
+    @@color_array[1] = @answer_2
+    puts "Select third color:"
+    @answer_3 = gets.chomp().to_s
+      while (@@color_array.include?(@answer_3) == true || @@possible_colors.include?(@answer_3) == false)
+        p "Choose a different color: "
+        @answer_3 = gets.chomp().to_s
+      end 
+    @@color_array[2] = @answer_3
+    puts "Select fourth color:"
+    @answer_4 = gets.chomp()
+      while (@@color_array.include?(@answer_4) == true || @@possible_colors.include?(@answer_4) == false)
+        p "Choose a different color: "
+        @answer_4 = gets.chomp()
+      end
+    @@color_array[3] = @answer_4
+    @code = @@color_array[0,4]
+  end
+end 
+
+class Player
+  attr_accessor :type_of_player
+  def initialize(type_of_player)
+    @type_of_player = type_of_player
+  end 
+end
+
+#setting what type of player will the human player be
+puts "Welcome to Mastermind, a game where you must create a code based on a sequence of four colors pegs (blue,green,white,red,black or yellow) or guess the code made by your opponent. Each time you move you'll get a feedback on how many pegs are correctly positioned and how many are in the code but wrongly positioned. Let's play"
+puts "Do you want to guess or create?" 
+answer = gets.chomp().downcase()
+while (answer != "guess" && answer != "create")
+  p "Type create or guess"
+  answer = gets.chomp().to_s
+end 
+if answer == "guess"
+  then p1 = Player.new("guesser")
+elsif answer == "create"
+  then p1 = Player.new("creator")
+end
+
+new_game = Game.new(p1)
+new_game.turn()
